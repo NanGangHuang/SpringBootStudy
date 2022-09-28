@@ -1,5 +1,7 @@
 package com.imooc.pojo;
 
+import javax.persistence.Id;
+
 public class Stu {
     @Id
     private Integer id;
