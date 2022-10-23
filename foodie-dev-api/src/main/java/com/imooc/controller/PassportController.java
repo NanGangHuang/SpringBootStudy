@@ -1,8 +1,10 @@
 package com.imooc.controller;
 
+import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.UserBO;
 import com.imooc.service.UserService;
 import com.imooc.util.IMOOCJSONResult;
+import com.imooc.util.MD5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +20,7 @@ public class PassportController {
     private UserService usersService;
 
     @ApiOperation(value = "用户名是否存在",notes = "用户名是否存在",httpMethod = "GET")
-    @GetMapping("/usernameIsExit")
+    @GetMapping("/usernameIsExist")
     public IMOOCJSONResult usernameIsExist(@RequestParam String username){
         if(StringUtils.isBlank(username)){
             return IMOOCJSONResult.errorMsg("用户名不能为空");
@@ -56,4 +58,29 @@ public class PassportController {
 
         return IMOOCJSONResult.ok();
     }
+
+    @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
+    @PostMapping("/login")
+    public IMOOCJSONResult login(@RequestBody UserBO userBO) throws Exception {
+        String username = userBO.getUsername();
+        String password = userBO.getPassword();
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(password) ){
+            return IMOOCJSONResult.errorMsg("用户或密码不能为空");
+        }
+
+        if(password.length()<6){
+            return IMOOCJSONResult.errorMsg("密码长度不能小于6");
+        }
+
+        Users userResult = usersService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
+
+        if(userResult == null){
+            return IMOOCJSONResult.errorMsg("用户或密码不正确");
+        }
+        return IMOOCJSONResult.ok(userResult);
+    }
+
+
+
+
 }
