@@ -12,6 +12,8 @@ public class CorsConfig {
     public CorsConfig() {
     }
 
+    private static final long MAX_AGE = 20*60*60;
+
     @Bean
     public CorsFilter corsFilter() {
         // 1. 添加cors配置信息
@@ -26,11 +28,13 @@ public class CorsConfig {
         // 设置是否发送cookie信息
         config.setAllowCredentials(true);
 
+
         // 设置允许请求的方式
         config.addAllowedMethod("*");
 
         // 设置允许的header
         config.addAllowedHeader("*");
+        config.setMaxAge(MAX_AGE);
 
         // 2. 为url添加映射路径
         UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
