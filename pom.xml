@@ -8,7 +8,9 @@
 		<module>foodie-dev-mapper</module>
 		<module>foodie-dev-service</module>
 		<module>foodie-dev-api</module>
-    </modules>
+		<module>foodie-dev-search</module>
+		<module>foodie-dev-fs</module>
+	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -48,6 +50,14 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!--<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>-->
 		<!-- mysql驱动 -->
 		<dependency>
 			<groupId>mysql</groupId>

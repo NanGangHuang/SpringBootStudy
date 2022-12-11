@@ -2,11 +2,9 @@ package com.imooc.controller;
 
 import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.UserBO;
+import com.imooc.pojo.vo.UsersVO;
 import com.imooc.service.UserService;
-import com.imooc.util.CookieUtils;
-import com.imooc.util.IMOOCJSONResult;
-import com.imooc.util.JsonUtils;
-import com.imooc.util.MD5Utils;
+import com.imooc.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 @Api(value="注册登录",tags = {"用于注册登录相关的接口"})
 @RestController
 @RequestMapping("passport")
-public class PassportController {
+public class PassportController extends BaseController {
 
     @Autowired
     private UserService usersService;
+
+    @Autowired
+    private RedisOperator redisOperator;
 
     @ApiOperation(value = "用户名是否存在",notes = "用户名是否存在",httpMethod = "GET")
     @GetMapping("/usernameIsExist")
@@ -61,9 +62,12 @@ public class PassportController {
 
         Users userResult = usersService.createUser(userBO);
 
-        userResult = setNullProperty(userResult);
+        //userResult = setNullProperty(userResult);
 
-        CookieUtils.setCookie(request,response,"user", JsonUtils.objectToJson(userResult),true);
+        UsersVO usersVO = getUsersVO(userResult);
+
+
+        CookieUtils.setCookie(request,response,"user", JsonUtils.objectToJson(usersVO),true);
 
         return IMOOCJSONResult.ok();
     }
@@ -85,12 +89,13 @@ public class PassportController {
 
         if(userResult == null){
             return IMOOCJSONResult.errorMsg("用户或密码不正确");
+
         }
+        //userResult = setNullProperty(userResult);
 
-        userResult = setNullProperty(userResult);
+        UsersVO usersVO = getUsersVO(userResult);
 
-        CookieUtils.setCookie(request,response,"user", JsonUtils.objectToJson(userResult),true);
-
+        CookieUtils.setCookie(request,response,"user", JsonUtils.objectToJson(usersVO),true);
 
         return IMOOCJSONResult.ok(userResult);
     }
@@ -110,6 +115,7 @@ public class PassportController {
     @PostMapping("/logout")
     public IMOOCJSONResult logout(@RequestParam String userId,HttpServletRequest request, HttpServletResponse response){
         CookieUtils.deleteCookie(request,response,"user");
+        redisOperator.del(REDIS_USER_TOKEN+":"+userId);
         return IMOOCJSONResult.ok();
     }
 
