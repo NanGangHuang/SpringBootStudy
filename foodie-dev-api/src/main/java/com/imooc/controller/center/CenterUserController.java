@@ -132,8 +132,6 @@ public class CenterUserController extends BaseController {
         CookieUtils.setCookie(request, response, "user",
                 JsonUtils.objectToJson(usersVO), true);
 
-        // TODO 后续要改，增加令牌token，会整合进redis，分布式会话
-
         return IMOOCJSONResult.ok();
     }
 
